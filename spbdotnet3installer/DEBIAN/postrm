@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case "$1" in
+    remove | purge)
+
+sudo systemctl disable spbdotnet3.service
+
+if [ -f /lib/systemd/system/spbdotnet3.service ]; then
+	sudo rm -f /lib/systemd/system/spbdotnet3.service
+fi
+
+if [ -d /usr/bin/spbdotnet3.service ]; then
+	sudo rm -rf /usr/local/bin/spbdotnet3.service
+fi
+
+if [ -d /var/log/spbdotnet3 ]; then
+	sudo rm -rf /usr/local/bin/spbdotnet3.service
+fi
+
+esac

@@ -1,0 +1,86 @@
+#!/bin/sh
+
+case "$1" in 
+     configure)
+
+   # Make sure the administrative user exists
+    if ! getent passwd spbdotnet3 > /dev/null; then
+        adduser --system $quiet --home /home/spbdotnet3 --no-create-home \
+            --shell /bin/bash --group --gecos "SpbDotNet test user" spbdotnet3
+    fi
+    # if the user was created manually, make sure the group is there as well
+    if ! getent group spbdotnet3 > /dev/null; then
+        addgroup --system $quiet spbdotnet3
+    fi
+    # make sure spbdotnet3 is in the spbdotnet3 group
+    if ! id -Gn spbdotnet3 | grep -qw spbdotnet3; then
+        adduser $quiet spbdotnet3 spbdotnet3
+    fi
+
+    # check validity of spbdotnet3 user and group
+    if [ "`id -u spbdotnet3`" -eq 0 ]; then
+        echo "The spbdotnet3 system user must not have uid 0 (root).
+Please fix this and reinstall this package." >&2
+        exit 1
+    fi
+    if [ "`id -g spbdotnet3`" -eq 0 ]; then
+        echo "The spbdotnet3 system user must not have root as primary group.
+Please fix this and reinstall this package." >&2
+        exit 1
+    fi
+
+    # ensure home directory ownership
+    if [ ! -d "/home/spbdotnet3" ]
+    then
+        mkdir -p /home/spbdotnet3
+    fi
+    su -s /bin/sh spbdotnet3 -c "test -O /home/spbdotnet3 &&
+            test -G /home/spbdotnet3" || \
+        chown spbdotnet3:spbdotnet3 /home/spbdotnet3
+    
+    #ensure log directory ownership    
+    if [ ! -d "/var/log/spbdotnet3" ]
+    then
+        mkdir -p /var/log/spbdotnet3
+    fi
+    su -s /bin/sh spbdotnet3 -c "test -O /var/log/spbdotnet3 &&
+            test -G /var/log/spbdotnet3" || \
+        chown spbdotnet3:spbdotnet3 /var/log/spbdotnet3   
+
+#Create service description file
+if [ -f /lib/systemd/system/spbdotnet3.service ]; then
+    sudo rm /lib/systemd/system/spbdotnet3.service
+fi
+
+cat >/lib/systemd/system/spbdotnet3.service <<EOL
+[Unit]
+Description=spbdotnet3 v1.0
+
+[Service]
+WorkingDirectory=/usr/bin/spbdotnet3.service
+ExecStart=/usr/bin/spbdotnet3.service/SpbDotNetCore3
+Restart=always
+RestartSec=40
+SyslogIdentifier=spbdotnet3
+User=spbdotnet3
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# Reload SystemD and enable the service, so it will restart on reboots
+sudo systemctl daemon-reload
+sudo systemctl enable spbdotnet3
+
+# Stop service
+sudo systemctl stop spbdotnet3
+# Start service
+sudo systemctl start spbdotnet3
+# View service status
+sudo systemctl --no-pager status spbdotnet3
+
+esac
+
+exit 0

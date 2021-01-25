@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpbDotNetCore3", "SpbDotNetCore3\SpbDotNetCore3.csproj", "{5BEC0965-82D4-4CA3-9554-471027A79BDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{4701AD4F-1EC6-4853-8EA7-B1D96E477939}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BEC0965-82D4-4CA3-9554-471027A79BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BEC0965-82D4-4CA3-9554-471027A79BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BEC0965-82D4-4CA3-9554-471027A79BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BEC0965-82D4-4CA3-9554-471027A79BDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4701AD4F-1EC6-4853-8EA7-B1D96E477939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4701AD4F-1EC6-4853-8EA7-B1D96E477939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4701AD4F-1EC6-4853-8EA7-B1D96E477939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4701AD4F-1EC6-4853-8EA7-B1D96E477939}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
