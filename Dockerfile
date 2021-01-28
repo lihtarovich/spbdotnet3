@@ -8,39 +8,31 @@ WORKDIR /source
 
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git 
-
+    
+# download project and restore as distinct layers
 RUN git clone https://github.com/lihtarovich/spbdotnet3 /source
-
-## copy csproj and restore as distinct layers
-#COPY *.sln .
-#COPY SpbDotNetCore3/*.csproj ./SpbDotNetCore3/
-#COPY DataAccessLayer/*.csproj ./DataAccessLayer/
 RUN dotnet restore -r linux-musl-x64
-
-# copy everything else and build app
-COPY SpbDotNetCore3/. ./SpbDotNetCore3/
-COPY DataAccessLayer/. ./DataAccessLayer/
-RUN dotnet publish --runtime linux-musl-x64 -c Release --self-contained true --no-restore -p:PublishTrimmed=True -p:PublishReadyToRun=true -o /usr/bin/spbdotnet3/ SpbDotNetCore3
+RUN dotnet publish --runtime linux-musl-x64 -c Release -o /usr/bin/spbdotnet3/ --self-contained true --no-restore -p:PublishTrimmed=True -p:PublishReadyToRun=true SpbDotNetCore3
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/runtime-deps:3.1-alpine-amd64
+FROM mcr.microsoft.com/dotnet/runtime-deps:3.1-alpine
 
 ARG dbhost=localhost
 ARG dbport=5432
 ARG UID=1001
 
-WORKDIR /usr/bin/spbdotnet3/
-COPY --from=build /usr/bin/spbdotnet3/ ./
+WORKDIR /usr/bin/spbdotnet3
+COPY --from=build /usr/bin/spbdotnet3 ./
 
 RUN echo DBHOST: $dbhost, DBPORT: $dbport
 #RUN mkdir -p /usr/bin/spbdotnet3/
-RUN mkdir -p /var/log/spbdotnet3/
+RUN mkdir -p /var/log/spbdo
 
 RUN sed -i "s/Host=localhost/Host='$dbhost'/" /usr/bin/spbdotnet3/appsettings.json \
         && sed -i "s/Port=5432/Port=$dbport/" /usr/bin/spbdotnet3/appsettings.json
 
-RUN groupadd -r spbdotnet3 --gid=$UID \
-        && useradd -r -g spbdotnet3 --uid=$UID spbdotnet3 \
+RUN addgroup -g $UID spbdotnet3 \
+        && adduser -G spbdotnet3 -u $UID spbdotnet3 -D \
         && chown -R spbdotnet3:spbdotnet3 /usr/bin/spbdotnet3/ \
         && chmod -R 500 /usr/bin/spbdotnet3/ \
         && chown -R spbdotnet3:spbdotnet3 /var/log/spbdotnet3/ \
