@@ -35,8 +35,7 @@ RUN addgroup -g $UID spbdotnet3 \
         && adduser -G spbdotnet3 -u $UID spbdotnet3 -D \
         && chown -R spbdotnet3:spbdotnet3 /usr/bin/spbdotnet3/ \
         && chmod -R 500 /usr/bin/spbdotnet3/ \
-        && chown -R spbdotnet3:spbdotnet3 /var/log/spbdotnet3/ \
-        && chmod -R 777 /usr/bin/spbdotnet3/spbdotnet.pfx
+        && chown -R spbdotnet3:spbdotnet3 /var/log/spbdotnet3/
         
 USER spbdotnet3
 
