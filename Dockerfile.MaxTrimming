@@ -26,7 +26,7 @@ COPY --from=build /usr/bin/spbdotnet3 ./
 
 RUN echo DBHOST: $dbhost, DBPORT: $dbport
 #RUN mkdir -p /usr/bin/spbdotnet3/
-RUN mkdir -p /var/log/spbdo
+RUN mkdir -p /var/log/spbdotnet3
 
 RUN sed -i "s/Host=localhost/Host='$dbhost'/" /usr/bin/spbdotnet3/appsettings.json \
         && sed -i "s/Port=5432/Port=$dbport/" /usr/bin/spbdotnet3/appsettings.json
